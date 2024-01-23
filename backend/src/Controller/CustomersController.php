@@ -3,33 +3,34 @@
 namespace App\Controller;
 
 use App\Service\CustomersService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CustomersController extends AbstractController
 {
     #[Route('/customers', name: 'list_customers')]
-    public function productList(CustomersService $customersService): JsonResponse
+    public function customerList(CustomersService $customersService): JsonResponse
     {
-        return $customersService->CustomerList();
+        return $customersService->customerList();
     }
 
-    #[Route('/customer/create', name: 'create_customer')]
-    public function createCustomer(CustomersService $customersService): JsonResponse
+    #[Route('/customer/create', name: 'create_customer', methods: 'POST')]
+    public function createCustomer(Request $request,CustomersService $customersService): JsonResponse
     {
-        return $customersService->createCustomer();
+        return $customersService->createCustomer($request->request->all());
     }
 
-    #[Route('/customer/update', name: 'update_customer')]
-    public function updateProduct(CustomersService $customersService): JsonResponse
+    #[Route('/customer/update', name: 'update_customer',methods:'POST')]
+    public function updateProduct(Request $request, CustomersService $customersService): JsonResponse
     {
-        return $customersService->updateCustomer();
+        return $customersService->updateCustomer($request->request->all());
     }
 
-    #[Route('/customer/delete', name: 'delete_customer')]
-    public function deleteProduct(CustomersService $customersService): JsonResponse
+    #[Route('/customer/delete', name:'delete_customer', methods: 'POST')]
+    public function deleteProduct(Request $request,CustomersService $customersService): JsonResponse
     {
-        return $customersService->deleteCustomer();
+        return $customersService->deleteCustomer($request->request->all());
     }
 }

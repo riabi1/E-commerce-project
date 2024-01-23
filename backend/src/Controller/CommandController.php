@@ -5,30 +5,30 @@ namespace App\Controller;
 use App\Service\CommandService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CommandController extends AbstractController
 {
-    #[Route('/command', name: 'app_command')]
-    #[Route('/products', name: 'product_list')]
+    #[Route('/commands', name:'command_list', methods: 'GET')]
     public function productList(CommandService $commandService): JsonResponse
     {
         return $commandService->CommandList();
     }
 
-    #[Route('/product/create', name: 'create_product')]
-    public function createProduct(CommandService $commandService): JsonResponse
+    #[Route('/command/create', name:'create_command', methods: 'POST')]
+    public function createProduct(Request $request,CommandService $commandService): JsonResponse
     {
-        return $commandService->createCommand();
+        return $commandService->createCommand($request->request->all());
     }
 
-    #[Route('/product/update', name: 'update_product')]
+    #[Route('/command/update', name: 'update_command',methods:'POST')]
     public function updateProduct(CommandService $commandService): JsonResponse
     {
         return $commandService->updateCommand();
     }
 
-    #[Route('/product/delete', name: 'delete_product')]
+    #[Route('/command/delete', name: 'delete_command',methods:'POST')]
     public function deleteProduct(CommandService $commandService): JsonResponse
     {
         return $commandService->deleteCommand();

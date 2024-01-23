@@ -14,7 +14,7 @@ class Customers
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $role = null;
+    private ?string $role = 'Customer';
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $first_name = null;

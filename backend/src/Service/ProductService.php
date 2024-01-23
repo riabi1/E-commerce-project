@@ -33,14 +33,14 @@ class ProductService
 
         return new JsonResponse($productsList, JsonResponse::HTTP_OK);
     }
-    public function createProduct(array $data): JsonResponse
+    public function createProduct($request): JsonResponse
     {
         $product = new Product();
-        $product->setProductName($data['product_name']);
-        $product->setPrice($data['price']);
-        $product->setStockQuantity($data['stock_quantity']);
-        $product->setDescription($data['description']);
-        $product->setCategory($data['category']);
+        $product->setProductName($request['product_name']);
+        $product->setPrice($request['price']);
+        $product->setStockQuantity($request['stock_quantity']);
+        $product->setDescription($request['description']);
+        $product->setCategory($request['category']);
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();

@@ -17,17 +17,9 @@ class ProductController extends AbstractController
     }
 
     #[Route('/product/create', name: 'create_product', methods: 'POST')]
-    public function createProduct(ProductService $productService): JsonResponse
+    public function createProduct(Request $request, ProductService $productService): JsonResponse
     {
-        $data =
-            [
-                'product_name' => 'added product',
-                'price' => 100,
-                'stock_quantity' => 10,
-                'description' => 'example product description.',
-                'category' => 'example Category',
-            ];
-        return $productService->createProduct($data);
+        return $productService->createProduct($request->request->all());
     }
 
     #[Route('/product/update', name: 'update_product', methods: 'POST')]
