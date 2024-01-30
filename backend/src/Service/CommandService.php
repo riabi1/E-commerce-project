@@ -5,41 +5,32 @@ namespace App\Service;
 use App\Entity\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class CommandService
 {
     private $entityManager;
+    private $serializer;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(SerializerInterface $serializer, EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+        $this->serializer = $serializer;
     }
     public function CommandList(): JsonResponse
     {
         $commands = $this->entityManager->getRepository(Command::class)->findAll();
 
-        $commandsList = [];
+        $commandsList = $this->serializer->serialize($commands,'json');
 
-        foreach($commands as $command)
-        {
-            $commandsList[]=[
-                'id'=>$command->getId(),
-                'order_date'=>$command->getOrderDate(),
-                'total_amount'=>$command->getTotalAmount(),
-                'status'=>$command->getStatus(),
-                'shipping_address'=>$command->getShippingAddress(),
-                'payment_method	'=>$command->getPaymentMethod()
-            ];
-        }
-
-        return new JsonResponse($commandsList, JsonResponse::HTTP_OK);
+        return new JsonResponse($commandsList, JsonResponse::HTTP_OK, [], true);
     }
-    public function createCommand($request): JsonResponse
+        public function createCommand(): JsonResponse
     {
-        $command = new Command();
+        // $command = new Command();
 
-        $this->entityManager->persist($command);
-        $this->entityManager->flush();
+        // $this->entityManager->persist($command);
+        // $this->entityManager->flush();
 
         return new JsonResponse(['message' => 'Command created successfully'], JsonResponse::HTTP_CREATED);
     }

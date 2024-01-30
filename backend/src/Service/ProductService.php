@@ -5,34 +5,29 @@ namespace App\Service;
 use App\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
+
+
 
 class ProductService
 {
     private $entityManager;
+    private $serializer;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(SerializerInterface $serializer, EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+        $this->serializer = $serializer;
     }
     public function productList(): JsonResponse
     {
         $products = $this->entityManager->getRepository(Product::class)->findAll();
 
-        $productsList = [];
+        $productsList = $this->serializer->serialize($products, 'json', ['groups' => 'prod']);
 
-        foreach ($products as $product) {
-            $productsList[] = [
-                'id' => $product->getId(),
-                'name' => $product->getProductName(),
-                'price' => $product->getPrice(),
-                'stock_quantity' => $product->getStockQuantity(),
-                'description' => $product->getDescription(),
-                'category' => $product->getCategory(),
-            ];
-        }
-
-        return new JsonResponse($productsList, JsonResponse::HTTP_OK);
+        return new JsonResponse($productsList, JsonResponse::HTTP_OK, [], true);
     }
+
     public function createProduct($request): JsonResponse
     {
         $product = new Product();
@@ -40,7 +35,6 @@ class ProductService
         $product->setPrice($request['price']);
         $product->setStockQuantity($request['stock_quantity']);
         $product->setDescription($request['description']);
-        $product->setCategory($request['category']);
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();
@@ -62,7 +56,6 @@ class ProductService
         $product->setPrice($request['price']);
         $product->setStockQuantity($request['stock_quantity']);
         $product->setDescription($request['description']);
-        $product->setCategory($request['category']);
 
         $this->entityManager->flush();
 

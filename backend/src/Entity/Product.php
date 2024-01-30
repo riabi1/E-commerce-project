@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProductRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
@@ -15,20 +16,26 @@ class Product
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['prod'])]
+    
     private ?string $product_name = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    #[Groups(['prod'])]
     private ?string $price = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['prod'])]
     private ?int $stock_quantity = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['prod'])]
     private ?string $description = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $category = null;
-
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    #[Groups(['prod'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Category $category = null;
     public function getId(): ?int
     {
         return $this->id;
@@ -82,12 +89,12 @@ class Product
         return $this;
     }
 
-    public function getCategory(): ?string
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
 
-    public function setCategory(?string $category): static
+    public function setCategory(?Category $category): static
     {
         $this->category = $category;
 

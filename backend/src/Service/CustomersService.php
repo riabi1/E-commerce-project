@@ -5,34 +5,25 @@ namespace App\Service;
 use App\Entity\Customers;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class CustomersService
 {
     private $entityManager;
+    private $serializer;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(SerializerInterface $serializer, EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+        $this->serializer = $serializer;
     }
     public function customerList(): JsonResponse
     {
         $customers = $this->entityManager->getRepository(Customers::class)->findAll();
 
-        $customersList = [];
+        $customersList = $this->serializer->serialize($customers, 'json');
 
-        foreach ($customers as $customer) {
-            $customersList[] = [
-                'id' => $customer->getId(),
-                'role' => $customer->getRole(),
-                'first_name' => $customer->getFirstName(),
-                'last_name' => $customer->getLastName(),
-                'email' => $customer->getEmail(),
-                'phone_number' => $customer->getPhoneNumber(),
-                'address' => $customer->getAddress()
-            ];
-        }
-
-        return new JsonResponse($customersList, JsonResponse::HTTP_OK);
+        return new JsonResponse($customersList, JsonResponse::HTTP_OK, [], true);
     }
     public function createCustomer($request): JsonResponse
     {
